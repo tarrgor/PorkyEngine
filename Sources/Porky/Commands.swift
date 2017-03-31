@@ -12,14 +12,24 @@ typealias CommandExecutor = (CommandContext, inout Command) throws -> ()
 
 enum ParseError: Error {
   case invalidCommand(cmd: String)
+  case invalidNumberOfArguments(args: Int, needs: Int)
 }
 
-struct Command {
+protocol Command {
+  var action: String { get }
+  var args: [String] { get }
+}
+
+protocol Executable {
+  var execute: CommandExecutor { get }
+}
+
+struct InputCommand: Command {
   let action: String
   let args: [String]
 }
 
-struct ParsedCommand {
+struct ExecutableCommand: Command, Executable {
   let action: String
   let args: [String]
   
@@ -37,7 +47,19 @@ struct CommandDescriptor {
 protocol CommandSet {
   var actions: [String:CommandDescriptor] { get }
   
-  func parse(command: Command) throws -> ParsedCommand
+  func parse(command: Command) throws -> Executable
+}
+
+extension CommandSet {
+  func parse(command: Command) throws -> Executable {
+    guard let descriptor = actions[command.action] else {
+      throw ParseError.invalidCommand(cmd: command.action)
+    }
+    if command.args.count != descriptor.numberOfArgs {
+      throw ParseError.invalidNumberOfArguments(args: command.args.count, needs: descriptor.numberOfArgs)
+    }
+    return ExecutableCommand(action: command.action, args: command.args, execute: descriptor.execute)
+  }
 }
 
 struct StandardCommandSet: CommandSet {
@@ -47,11 +69,4 @@ struct StandardCommandSet: CommandSet {
       context.isQuit = true
     }
   ]
-  
-  func parse(command: Command) throws -> ParsedCommand {
-    guard let descriptor = actions[command.action] else {
-      throw ParseError.invalidCommand(cmd: command.action)
-    }
-    return ParsedCommand(action: command.action, args: command.args, execute: descriptor.execute)
-  }
 }

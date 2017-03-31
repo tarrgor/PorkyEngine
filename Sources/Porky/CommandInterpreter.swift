@@ -34,7 +34,10 @@ class CommandInterpreter {
   
   private func readCommand() -> Command? {
     guard let cmd = readLine() else { return nil }
-    return Command(action: cmd, args: [])
+    var parts = cmd.components(separatedBy: " ")
+    let action = parts.removeFirst()
+    let args = parts
+    return InputCommand(action: action, args: args)
   }
   
   private func displayPrompt() {
