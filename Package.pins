@@ -1,0 +1,12 @@
+{
+  "autoPin": true,
+  "pins": [
+    {
+      "package": "ChessToolkit",
+      "reason": null,
+      "repositoryURL": "https://github.com/tarrgor/ChessToolkit",
+      "version": "0.5.1"
+    }
+  ],
+  "version": 1
+}
