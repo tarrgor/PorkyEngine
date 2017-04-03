@@ -10,12 +10,10 @@ import Foundation
 
 class CommandInterpreter {
   
-  var prompt = ">"
-  let commandSet: CommandSet
-  let context: CommandContext = CommandContext()
+  let context: CommandContext
   
-  init(commandSet: CommandSet) {
-    self.commandSet = commandSet
+  init(context: CommandContext) {
+    self.context = context
   }
   
   func run() {
@@ -41,7 +39,7 @@ class CommandInterpreter {
   }
   
   private func displayPrompt() {
-    print("\(self.prompt) ", terminator: "")
+    print("\(self.context.commandSet.prompt) ", terminator: "")
   }
   
 }

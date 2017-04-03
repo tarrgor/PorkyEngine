@@ -45,6 +45,7 @@ struct CommandDescriptor {
 }
 
 protocol CommandSet {
+  var prompt: String { get }
   var actions: [String:CommandDescriptor] { get }
   
   func parse(command: Command) throws -> Executable
@@ -63,10 +64,9 @@ extension CommandSet {
 }
 
 struct StandardCommandSet: CommandSet {
+  let prompt: String = ">"
   let actions: [String:CommandDescriptor] = [
-    "quit": CommandDescriptor(actionName: "quit", numberOfArgs: 0, usageInfo: "quit - Exit the Porky Engine") {
-      context, command in
-      context.isQuit = true
-    }
+    "quit": Descriptors.quitCmd,
+    "pos": Descriptors.positionCmd
   ]
 }

@@ -11,11 +11,13 @@ import ChessToolkit
 
 class CommandContext {
   
+  let commandSet: CommandSet
+  
   var position = CTPosition()
   var isQuit = false
   
-  init() {
-    
+  init(commandSet: CommandSet) {
+    self.commandSet = commandSet
   }
   
 }
