@@ -67,6 +67,7 @@ struct StandardCommandSet: CommandSet {
   let prompt: String = ">"
   let actions: [String:CommandDescriptor] = [
     "quit": Descriptors.quitCmd,
-    "pos": Descriptors.positionCmd
+    "pos": Descriptors.positionCmd,
+    "help": Descriptors.helpCmd
   ]
 }
