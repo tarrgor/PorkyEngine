@@ -68,6 +68,7 @@ struct StandardCommandSet: CommandSet {
   let actions: [String:CommandDescriptor] = [
     "quit": Descriptors.quitCmd,
     "pos": Descriptors.positionCmd,
-    "help": Descriptors.helpCmd
+    "help": Descriptors.helpCmd,
+    "search": Descriptors.searchCmd
   ]
 }

@@ -8,6 +8,7 @@
 
 import Foundation
 import ChessToolkit
+import PorkyEngine
 
 class Descriptors {
 
@@ -33,6 +34,17 @@ class Descriptors {
       actions.forEach { action in
         print(action.usageInfo)
       }
+    }
+  }()
+  
+  static let searchCmd: CommandDescriptor = {
+    return CommandDescriptor(actionName: "search", numberOfArgs: 0, usageInfo: "search - Search the best move possible in the current position") {
+      context, command in
+      let searcher = Searcher(position: context.position)
+      let start = Date().timeIntervalSince1970
+      let _ = searcher.search()
+      let end = Date().timeIntervalSince1970
+      print("Needed \(end - start)")
     }
   }()
 }

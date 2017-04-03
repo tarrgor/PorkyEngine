@@ -57,7 +57,7 @@ extension CTPiece: Evaluatable {
 
 extension CTPosition: Evaluatable {
   
-  func evaluate() -> Int {
+  public func evaluate() -> Int {
     var value = 0
     
     for square in CTSquare.allSquares {
