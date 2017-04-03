@@ -25,18 +25,17 @@ public final class Searcher {
   }
   
   private func maximize(depth: Int, alpha: Int, beta: Int) -> Int {
-    let moves = position.moveGenerator.generateAllMovesForSide(position.sideToMove)
+    // pre-sort moves for faster alpha/beta search
+    let moves = position.moveGenerator.generateAllMovesForSide(position.sideToMove).sorted { move1, move2 in
+      return move1.evaluate() >= move2.evaluate()
+    }
+
     if (depth == 0 || moves.count == 0) {
       return position.evaluate()
     }
     
-    // pre-sort moves for faster alpha/beta search
-    let sortedMoves = moves.sorted { (move1, move2) -> Bool in
-      return move1.evaluate() >= move2.evaluate()
-    }
-    
     var maxValue = alpha
-    for move in sortedMoves {
+    for move in moves {
       guard position.makeMove(from: move.from, to: move.to) else { fatalError() }
       let value = minimize(depth: depth - 1, alpha: maxValue, beta: beta)
       guard position.takeBackMove() else { fatalError() }
@@ -54,18 +53,17 @@ public final class Searcher {
   }
   
   private func minimize(depth: Int, alpha: Int, beta: Int) -> Int {
-    let moves = position.moveGenerator.generateAllMovesForSide(position.sideToMove)
+    // pre-sort moves for faster alpha/beta search
+    let moves = position.moveGenerator.generateAllMovesForSide(position.sideToMove).sorted { move1, move2 in
+      return move1.evaluate() >= move2.evaluate()
+    }
+    
     if (depth == 0 || moves.count == 0) {
       return position.evaluate()
     }
 
-    // pre-sort moves for faster alpha/beta search
-    let sortedMoves = moves.sorted { (move1, move2) -> Bool in
-      return move1.evaluate() >= move2.evaluate()
-    }
-
     var minValue = beta
-    for move in sortedMoves {
+    for move in moves {
       guard position.makeMove(from: move.from, to: move.to) else { fatalError() }
       let value = maximize(depth: depth - 1, alpha: alpha, beta: minValue)
       guard position.takeBackMove() else { fatalError() }
