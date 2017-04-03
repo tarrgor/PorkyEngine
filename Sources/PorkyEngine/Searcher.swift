@@ -30,8 +30,13 @@ public final class Searcher {
       return position.evaluate()
     }
     
+    // pre-sort moves for faster alpha/beta search
+    let sortedMoves = moves.sorted { (move1, move2) -> Bool in
+      return move1.evaluate() >= move2.evaluate()
+    }
+    
     var maxValue = alpha
-    for move in moves {
+    for move in sortedMoves {
       guard position.makeMove(from: move.from, to: move.to) else { fatalError() }
       let value = minimize(depth: depth - 1, alpha: maxValue, beta: beta)
       guard position.takeBackMove() else { fatalError() }
@@ -53,9 +58,14 @@ public final class Searcher {
     if (depth == 0 || moves.count == 0) {
       return position.evaluate()
     }
-    
+
+    // pre-sort moves for faster alpha/beta search
+    let sortedMoves = moves.sorted { (move1, move2) -> Bool in
+      return move1.evaluate() >= move2.evaluate()
+    }
+
     var minValue = beta
-    for move in moves {
+    for move in sortedMoves {
       guard position.makeMove(from: move.from, to: move.to) else { fatalError() }
       let value = maximize(depth: depth - 1, alpha: alpha, beta: minValue)
       guard position.takeBackMove() else { fatalError() }

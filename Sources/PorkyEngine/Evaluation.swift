@@ -74,3 +74,21 @@ extension CTPosition: Evaluatable {
   
 }
 
+/// Move evaluation is only for pre-sorting moves in the
+/// move list at the beginning of each search iteration
+extension CTMove: Evaluatable {
+  
+  func evaluate() -> Int {
+    var result = 0
+    let captureVal = captured.evaluate()
+    let pieceVal = 900 - piece.evaluate()
+    if captureVal > 0 { result = captureVal + pieceVal }
+    return result
+  }
+  
+}
+
+
+
+
+
