@@ -47,4 +47,37 @@ class Descriptors {
       print("Needed \(end - start)")
     }
   }()
+  
+  static let moveCmd: CommandDescriptor = {
+    return CommandDescriptor(actionName: "move", numberOfArgs: 1, usageInfo: "move <moveString> - Execute the specified move e.g. move e2e4") {
+      context, command in
+      if let move = moveFromString(context.position, command.args[0]) {
+        if !context.position.makeMove(from: move.from, to: move.to) {
+          print("Could not execute move.")
+        } else {
+          print("Move executed.\n")
+          print(context.position)
+        }
+      } else {
+        print("Error parsing the move argument: \(command.args[0])")
+      }
+    }
+  }()
+  
 }
+
+extension Descriptors {
+  
+  fileprivate static func moveFromString(_ position: CTPosition, _ move: String) -> CTMove? {
+    guard move.characters.count == 4 else { return nil }
+    
+    let fromIdx = move.index(move.startIndex, offsetBy: 2)
+    
+    guard let from = CTSquare.fromString(move.substring(to: fromIdx)) else { return nil }
+    guard let to = CTSquare.fromString(move.substring(from: fromIdx)) else { return nil }
+    
+    return CTMoveBuilder.build(position, from: from, to: to)
+  }
+  
+}
+
