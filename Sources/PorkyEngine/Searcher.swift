@@ -10,6 +10,7 @@ import Foundation
 import ChessToolkit
 
 public final class Searcher {
+  
   let position: CTPosition
   let maxDepth: Int = 3
   var foundMove: CTMove?
@@ -19,25 +20,27 @@ public final class Searcher {
   }
   
   public func search() -> Int {
-    let value = maximize(depth: maxDepth, alpha: Int.min, beta: Int.max)
+    let value = alphaBeta(side: position.sideToMove, depth: maxDepth, alpha: -99999, beta: 99999)
     print("Final Move: \(foundMove != nil ? foundMove!.toNotation(.long) : "None"), Value: \(value)")
     return value
   }
   
-  private func maximize(depth: Int, alpha: Int, beta: Int) -> Int {
-    // pre-sort moves for faster alpha/beta search
-    let moves = position.moveGenerator.generateAllMovesForSide(position.sideToMove).sorted { move1, move2 in
+  private func alphaBeta(side: CTSide, depth: Int, alpha: Int, beta: Int) -> Int {
+    // generate all possible moves and then pre-sort them for faster alpha/beta search
+    let moves = position.moveGenerator.generateAllMovesForSide(side).sorted { move1, move2 in
       return move1.evaluate() >= move2.evaluate()
     }
-
-    if (depth == 0 || moves.count == 0) {
-      return position.evaluate()
-    }
     
+    // if end of search depth reached, return current evaluation
+    if (depth == 0 || moves.count == 0) {
+      return side == .white ? position.evaluate() : -position.evaluate()
+    }
+  
+    // search best move
     var maxValue = alpha
     for move in moves {
       guard position.makeMove(from: move.from, to: move.to) else { fatalError() }
-      let value = minimize(depth: depth - 1, alpha: maxValue, beta: beta)
+      let value = -alphaBeta(side: side.opposite(), depth: depth - 1, alpha: -beta, beta: -maxValue)
       guard position.takeBackMove() else { fatalError() }
       if value > maxValue {
         maxValue = value
@@ -51,29 +54,10 @@ public final class Searcher {
     }
     return maxValue
   }
-  
-  private func minimize(depth: Int, alpha: Int, beta: Int) -> Int {
-    // pre-sort moves for faster alpha/beta search
-    let moves = position.moveGenerator.generateAllMovesForSide(position.sideToMove).sorted { move1, move2 in
-      return move1.evaluate() >= move2.evaluate()
-    }
-    
-    if (depth == 0 || moves.count == 0) {
-      return position.evaluate()
-    }
+}
 
-    var minValue = beta
-    for move in moves {
-      guard position.makeMove(from: move.from, to: move.to) else { fatalError() }
-      let value = maximize(depth: depth - 1, alpha: alpha, beta: minValue)
-      guard position.takeBackMove() else { fatalError() }
-      if value < minValue {
-        minValue = value
-        if minValue <= alpha {
-          break
-        }
-      }
-    }
-    return minValue
+extension CTSide {
+  func opposite() -> CTSide {
+    return self == .white ? .black : .white
   }
 }

@@ -78,10 +78,11 @@ extension CTPosition: Evaluatable {
 /// move list at the beginning of each search iteration
 extension CTMove: Evaluatable {
   
+  /// The piece evaluation is used for the engine only and therefore only returns positive values
   func evaluate() -> Int {
     var result = 0
-    let captureVal = captured.evaluate()
-    let pieceVal = 900 - piece.evaluate()
+    let captureVal = abs(captured.evaluate())
+    let pieceVal = 900 - abs(piece.evaluate())
     if captureVal > 0 { result = captureVal + pieceVal }
     return result
   }
