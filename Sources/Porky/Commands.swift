@@ -70,6 +70,7 @@ struct StandardCommandSet: CommandSet {
     "pos": Descriptors.positionCmd,
     "help": Descriptors.helpCmd,
     "search": Descriptors.searchCmd,
-    "move": Descriptors.moveCmd
+    "move": Descriptors.moveCmd,
+    "eval": Descriptors.evalCmd
   ]
 }

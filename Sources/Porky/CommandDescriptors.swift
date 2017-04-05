@@ -64,6 +64,13 @@ class Descriptors {
     }
   }()
   
+  static let evalCmd: CommandDescriptor = {
+    return CommandDescriptor(actionName: "eval", numberOfArgs: 0,
+                             usageInfo: "eval - Show evaluation of the current position") {
+      context, command in
+      print("Current evaluation: \(context.position.evaluate())")
+    }
+  }()
 }
 
 extension Descriptors {

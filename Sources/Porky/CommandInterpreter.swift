@@ -32,6 +32,7 @@ class CommandInterpreter {
   
   private func readCommand() -> Command? {
     guard let cmd = readLine() else { return nil }
+    guard cmd.characters.count > 0 else { return nil }
     var parts = cmd.components(separatedBy: " ")
     let action = parts.removeFirst()
     let args = parts
