@@ -10,22 +10,29 @@ import Foundation
 import ChessToolkit
 
 public final class Searcher {
-  
+
+  public var nodeCount: Int = 0
+
   let position: CTPosition
   let maxDepth: Int = 3
   var foundMove: CTMove?
-  
+
   public init(position: CTPosition) {
     self.position = position
   }
   
   public func search() -> Int {
+    nodeCount = 0
     let value = alphaBeta(side: position.sideToMove, depth: maxDepth, alpha: -99999, beta: 99999)
     print("Final Move: \(foundMove != nil ? foundMove!.toNotation(.long) : "None"), Value: \(value)")
+    print("\(nodeCount) nodes visited.")
     return value
   }
   
   private func alphaBeta(side: CTSide, depth: Int, alpha: Int, beta: Int) -> Int {
+    // increase node count
+    nodeCount += 1
+
     // generate all possible moves and then pre-sort them for faster alpha/beta search
     let moves = position.moveGenerator.generateAllMovesForSide(side).sorted { move1, move2 in
       return move1.evaluate() >= move2.evaluate()
@@ -33,7 +40,8 @@ public final class Searcher {
     
     // if end of search depth reached, return current evaluation
     if (depth == 0 || moves.count == 0) {
-      return side == .white ? position.evaluate() : -position.evaluate()
+      // Quiescence search
+      return quiescence(side: side.opposite(), alpha: alpha, beta: beta)
     }
   
     // search best move
@@ -52,7 +60,38 @@ public final class Searcher {
         }
       }
     }
+
     return maxValue
+  }
+
+  private func quiescence(side: CTSide, alpha: Int, beta: Int) -> Int {
+    // increase node count
+    nodeCount += 1
+
+    var newAlpha = alpha
+    let standPat = position.evaluate()
+
+    if standPat >= beta {
+      return beta
+    }
+    if alpha < standPat {
+      newAlpha = standPat
+    }
+
+    let moves = position.moveGenerator.generateCapturingMovesForSide(side)
+    for move in moves {
+      guard position.makeMove(from: move.from, to: move.to) else { continue }
+      let value = -quiescence(side: side.opposite(), alpha: -beta, beta: -newAlpha)
+      guard position.takeBackMove() else { fatalError() }
+
+      if value > newAlpha {
+        if value >= beta {
+          return beta
+        }
+        newAlpha = value
+      }
+    }
+    return newAlpha
   }
 }
 
