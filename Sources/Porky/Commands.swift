@@ -71,6 +71,7 @@ struct StandardCommandSet: CommandSet {
     "help": Descriptors.helpCmd,
     "search": Descriptors.searchCmd,
     "move": Descriptors.moveCmd,
-    "eval": Descriptors.evalCmd
+    "eval": Descriptors.evalCmd,
+    "takeback": Descriptors.takebackCmd
   ]
 }

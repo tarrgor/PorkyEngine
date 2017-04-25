@@ -45,10 +45,12 @@ class Descriptors {
                              usageInfo: "search - Search the best move possible in the current position") {
       context, command in
       let searcher = Searcher(position: context.position)
-      let start = Date().timeIntervalSince1970
-      let _ = searcher.search()
-      let end = Date().timeIntervalSince1970
-      print("Needed \(end - start), \(Double(searcher.nodeCount) / (end - start)) nodes/s.")
+      if let move = searcher.search() {
+        context.position.makeMove(from: move.from, to: move.to)
+        print(context.position)
+      } else {
+        print("No move found.")
+      }
     }
   }()
   
@@ -74,6 +76,15 @@ class Descriptors {
                              usageInfo: "eval - Show evaluation of the current position") {
       context, command in
       print("Current evaluation: \(context.position.evaluate())")
+    }
+  }()
+
+  static let takebackCmd: CommandDescriptor = {
+    return CommandDescriptor(actionName: "takeback", numberOfArgs: 0,
+        usageInfo: "takeback - Take back the last move") {
+      context, command in
+      context.position.takeBackMove()
+      print(context.position)
     }
   }()
 }

@@ -16,17 +16,23 @@ public final class Searcher {
   let position: CTPosition
   let maxDepth: Int = 3
   var foundMove: CTMove?
+  var cutoffs: Int = 0
 
   public init(position: CTPosition) {
     self.position = position
   }
-  
-  public func search() -> Int {
+
+  @discardableResult
+  public func search() -> CTMove? {
     nodeCount = 0
+    let start = Date().timeIntervalSince1970
     let value = alphaBeta(side: position.sideToMove, depth: maxDepth, alpha: -99999, beta: 99999)
+    let end = Date().timeIntervalSince1970
+
     print("Final Move: \(foundMove != nil ? foundMove!.toNotation(.long) : "None"), Value: \(value)")
     print("\(nodeCount) nodes visited.")
-    return value
+    print("Needed \(end - start), \(Double(nodeCount) / (end - start)) nodes/s, \(cutoffs) cutoffs.")
+    return foundMove
   }
   
   private func alphaBeta(side: CTSide, depth: Int, alpha: Int, beta: Int) -> Int {
@@ -53,6 +59,7 @@ public final class Searcher {
       if value > maxValue {
         maxValue = value
         if maxValue >= beta {
+          cutoffs += 1
           break
         }
         if depth == maxDepth {
