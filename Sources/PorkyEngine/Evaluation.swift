@@ -65,7 +65,9 @@ extension CTPosition: Evaluatable {
       let pieceValue = piece.evaluate()
       if piece != .empty {
         let squareValue = square.evaluate()
-        value += (piece.side() == .white ? squareValue : -squareValue) + pieceValue
+        let valueToAdd = ((piece.side() == .white ? squareValue : -squareValue) + pieceValue)
+//      print("\(square.toString()): \(squareValue), Adding \(valueToAdd)")
+        value += valueToAdd
       }
     }
 
