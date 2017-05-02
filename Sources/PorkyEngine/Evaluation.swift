@@ -16,10 +16,16 @@ protocol Evaluatable {
 extension CTSquare: Evaluatable {
   
   func evaluate() -> Int {
-    let rowAndColumn = self.toRowAndColumn()
-    let rowCenterDistance = rowAndColumn.row > 3 ? 7 - rowAndColumn.row : rowAndColumn.row
-    let colCenterDistance = rowAndColumn.column > 3 ? 7 - rowAndColumn.column : rowAndColumn.column
-    return rowCenterDistance * 3 + colCenterDistance * 3
+    switch self {
+      case .d4, .e4, .d5, .e5:
+        return 8
+      case .c3, .c4, .d3, .e3, .f3, .f4, .f5, .f6, .e6, .d6, .c6, .c5:
+        return 4
+      case .b2, .c2, .d2, .e2, .f2, .g2, .g3, .g4, .g5, .g6, .g7, .f7, .e7, .d7, .c7, .b7, .b6, .b5, .b4, .b3:
+        return 2
+      default:
+        return 1
+    }
   }
   
 }

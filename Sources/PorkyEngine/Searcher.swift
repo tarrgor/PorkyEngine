@@ -12,9 +12,9 @@ import ChessToolkit
 public final class Searcher {
 
   public var nodeCount: Int = 0
+  public var maxDepth: Int = 5
 
   let position: CTPosition
-  let maxDepth: Int = 3
   var foundMove: CTMove?
   var cutoffs: Int = 0
 

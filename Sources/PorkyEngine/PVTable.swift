@@ -48,7 +48,7 @@ extension PVTable: CustomStringConvertible {
 
     while hash != nil {
       if let h = hash, let entry = _dictionary[h] {
-        result += "\(entry.move.toNotation(.long)) (\(entry.score)) "
+        result += "\(entry.move.toNotation(.short)) (\(entry.score)) "
         hash = entry.followUp
       } else {
         hash = nil

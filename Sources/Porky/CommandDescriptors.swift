@@ -41,10 +41,15 @@ class Descriptors {
   }()
   
   static let searchCmd: CommandDescriptor = {
-    return CommandDescriptor(actionName: "search", numberOfArgs: 0,
-                             usageInfo: "search - Search the best move possible in the current position") {
+    return CommandDescriptor(actionName: "search", numberOfArgs: 1,
+                             usageInfo: "search - Search the best move possible in the current position with the specified depth") {
       context, command in
       let searcher = Searcher(position: context.position)
+      if let maxDepth = Int(command.args[0]) {
+        searcher.maxDepth = maxDepth
+      } else {
+        print("Invalid maxDepth parameter specified.")
+      }
       if let move = searcher.search() {
         context.position.makeMove(from: move.from, to: move.to)
         print(context.position)
