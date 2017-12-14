@@ -97,7 +97,7 @@ class Descriptors {
 extension Descriptors {
   
   fileprivate static func moveFromString(_ position: CTPosition, _ move: String) -> CTMove? {
-    guard move.characters.count == 4 else { return nil }
+    guard move.count == 4 else { return nil }
     
     let fromIdx = move.index(move.startIndex, offsetBy: 2)
     
