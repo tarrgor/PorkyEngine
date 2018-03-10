@@ -101,8 +101,8 @@ extension Descriptors {
     
     let fromIdx = move.index(move.startIndex, offsetBy: 2)
     
-    guard let from = CTSquare.fromString(move.substring(to: fromIdx)) else { return nil }
-    guard let to = CTSquare.fromString(move.substring(from: fromIdx)) else { return nil }
+    guard let from = CTSquare.fromString(String(move[...fromIdx])) else { return nil }
+    guard let to = CTSquare.fromString(String(move[fromIdx...])) else { return nil }
     
     return CTMoveBuilder.build(position, from: from, to: to)
   }
