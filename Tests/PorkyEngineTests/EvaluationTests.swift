@@ -1,4 +1,5 @@
 import XCTest
+import ChessToolkit
 @testable import PorkyEngine
 
 class EvaluationTests: XCTestCase {
