@@ -23,7 +23,7 @@ class PVTable {
 
   var _dictionary: [UInt64:PVEntry] = [:]
 
-  private init() {
+  internal init() {
 
   }
 
