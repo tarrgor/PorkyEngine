@@ -101,7 +101,7 @@ public class SimpleEvaluator: Evaluator {
       if piece != .empty {
         let squareValue = square.evaluate()
         let valueToAdd = ((piece.side() == .white ? squareValue : -squareValue) + pieceValue)
-        //      print("\(square.toString()): \(squareValue), Adding \(valueToAdd)")
+        //     print("\(square.toString()): \(squareValue), Adding \(valueToAdd)")
         value += valueToAdd
       }
     }
