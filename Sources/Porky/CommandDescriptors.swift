@@ -42,9 +42,8 @@ class Descriptors {
   
   static let searchCmd: CommandDescriptor = {
     return CommandDescriptor(actionName: "search", numberOfArgs: 1,
-                             usageInfo: "search - Search the best move possible in the current position with the specified depth") {
-      context, command in
-      let searcher = Searcher(position: context.position)
+                             usageInfo: "search - Search the best move possible in the current position with the specified depth") { context, command in
+      let searcher = Searcher(position: context.position, evaluator: context.evaluator)
       if let maxDepth = Int(command.args[0]) {
         searcher.maxDepth = maxDepth
       } else {
@@ -78,9 +77,8 @@ class Descriptors {
   
   static let evalCmd: CommandDescriptor = {
     return CommandDescriptor(actionName: "eval", numberOfArgs: 0,
-                             usageInfo: "eval - Show evaluation of the current position") {
-      context, command in
-      print("Current evaluation: \(context.position.evaluate())")
+                             usageInfo: "eval - Show evaluation of the current position") { context, command in
+      print("Current evaluation: \(context.evaluator.evaluate(position: context.position))")
     }
   }()
 

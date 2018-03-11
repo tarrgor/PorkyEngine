@@ -15,11 +15,14 @@ public final class Searcher {
   public var maxDepth: Int = 5
 
   let position: CTPosition
+  let evaluator: Evaluator
+  
   var foundMove: CTMove?
   var cutoffs: Int = 0
 
-  public init(position: CTPosition) {
+  public init(position: CTPosition, evaluator: Evaluator) {
     self.position = position
+    self.evaluator = evaluator
   }
 
   @discardableResult
@@ -98,7 +101,7 @@ public final class Searcher {
     nodeCount += 1
 
     var newAlpha = alpha
-    let standPat = position.evaluate()
+    let standPat = evaluator.evaluate(position: position)
 
     if standPat >= beta {
       return beta

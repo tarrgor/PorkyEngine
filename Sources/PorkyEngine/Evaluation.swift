@@ -9,6 +9,10 @@
 import Foundation
 import ChessToolkit
 
+
+/// Evaluatable protocol represents an object that has a chess related value
+///
+
 protocol Evaluatable {
   func evaluate() -> Int
 }
@@ -61,27 +65,6 @@ extension CTPiece: Evaluatable {
   
 }
 
-extension CTPosition: Evaluatable {
-  
-  public func evaluate() -> Int {
-    var value = 0
-    
-    for square in CTSquare.allSquares {
-      let piece = pieceAt(square)
-      let pieceValue = piece.evaluate()
-      if piece != .empty {
-        let squareValue = square.evaluate()
-        let valueToAdd = ((piece.side() == .white ? squareValue : -squareValue) + pieceValue)
-//      print("\(square.toString()): \(squareValue), Adding \(valueToAdd)")
-        value += valueToAdd
-      }
-    }
-
-    return value
-  }
-  
-}
-
 /// Move evaluation is only for pre-sorting moves in the
 /// move list at the beginning of each search iteration
 extension CTMove: Evaluatable {
@@ -98,6 +81,35 @@ extension CTMove: Evaluatable {
 }
 
 
+/// Evaluator protocol represents a class to evaluate a position
+///
+
+public protocol Evaluator {
+  func evaluate(position: CTPosition) -> Int
+}
+
+public class SimpleEvaluator: Evaluator {
+
+  public init() { }
+  
+  public func evaluate(position: CTPosition) -> Int {
+    var value = 0
+    
+    for square in CTSquare.allSquares {
+      let piece = position.pieceAt(square)
+      let pieceValue = piece.evaluate()
+      if piece != .empty {
+        let squareValue = square.evaluate()
+        let valueToAdd = ((piece.side() == .white ? squareValue : -squareValue) + pieceValue)
+        //      print("\(square.toString()): \(squareValue), Adding \(valueToAdd)")
+        value += valueToAdd
+      }
+    }
+    
+    return value
+  }
+  
+}
 
 
 

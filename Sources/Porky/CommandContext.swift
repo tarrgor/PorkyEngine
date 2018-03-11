@@ -7,17 +7,20 @@
 //
 
 import Foundation
+import PorkyEngine
 import ChessToolkit
 
 class CommandContext {
   
   let commandSet: CommandSet
-  
+  let evaluator: Evaluator
+
   var position = CTPosition()
   var isQuit = false
   
-  init(commandSet: CommandSet) {
+  init(commandSet: CommandSet, evaluator: Evaluator) {
     self.commandSet = commandSet
+    self.evaluator = evaluator
   }
   
 }
