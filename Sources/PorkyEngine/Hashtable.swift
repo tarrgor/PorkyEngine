@@ -9,38 +9,41 @@
 import Foundation
 import ChessToolkit
 
+public protocol Hashtable: CustomStringConvertible {
+  var currentLineStartHash: UInt64? { get set }
+
+  func store(key: UInt64, move: CTMove, score: Int, followUp: UInt64)
+  func probe(key: UInt64) -> (move: CTMove, score: Int, followUp: UInt64?)?
+}
+
 struct PVEntry {
   let move: CTMove
   let score: Int
   let followUp: UInt64?
 }
 
-class PVTable {
+public class DefaultPVTable: Hashtable {
 
-  static let shared = PVTable()
-
-  var currentLineStartHash: UInt64?
+  public var currentLineStartHash: UInt64?
 
   var _dictionary: [UInt64:PVEntry] = [:]
 
-  internal init() {
+  public init() { }
 
-  }
-
-  func store(key: UInt64, move: CTMove, score: Int, followUp: UInt64) {
+  public func store(key: UInt64, move: CTMove, score: Int, followUp: UInt64) {
     let entry = PVEntry(move: move, score: score, followUp: followUp)
     _dictionary[key] = entry
   }
   
-  func probe(key: UInt64) -> (move: CTMove, score: Int, followUp: UInt64?)? {
+  public func probe(key: UInt64) -> (move: CTMove, score: Int, followUp: UInt64?)? {
     guard let entry = _dictionary[key] else { return nil }
     return (move: entry.move, score: entry.score, followUp: entry.followUp)
   }
   
 }
 
-extension PVTable: CustomStringConvertible {
-  var description: String {
+extension DefaultPVTable: CustomStringConvertible {
+  public var description: String {
     guard let startHash = currentLineStartHash else { return "--" }
 
     var result = ""

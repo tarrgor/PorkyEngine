@@ -43,7 +43,8 @@ class Descriptors {
   static let searchCmd: CommandDescriptor = {
     return CommandDescriptor(actionName: "search", numberOfArgs: 1,
                              usageInfo: "search - Search the best move possible in the current position with the specified depth") { context, command in
-      let searcher = Searcher(position: context.position, evaluator: context.evaluator)
+      let searcher = Searcher(position: context.position, evaluator: context.evaluator, pvTable: context.pvTable,
+                              generator: DefaultMoveGenerator(position: context.position))
       if let maxDepth = Int(command.args[0]) {
         searcher.maxDepth = maxDepth
       } else {

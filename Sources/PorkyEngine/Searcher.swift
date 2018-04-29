@@ -16,13 +16,18 @@ public final class Searcher {
 
   let position: CTPosition
   let evaluator: Evaluator
+  let generator: MoveGenerator
   
   var foundMove: CTMove?
   var cutoffs: Int = 0
 
-  public init(position: CTPosition, evaluator: Evaluator) {
+  var pvTable: Hashtable
+  
+  public init(position: CTPosition, evaluator: Evaluator, pvTable: Hashtable, generator: MoveGenerator) {
     self.position = position
     self.evaluator = evaluator
+    self.pvTable = pvTable
+    self.generator = generator
   }
 
   @discardableResult
@@ -31,7 +36,7 @@ public final class Searcher {
     nodeCount = 0
 
     // reset start position for iterating pv table
-    PVTable.shared.currentLineStartHash = position.hashKey
+    pvTable.currentLineStartHash = position.hashKey
 
     // search with time measurement
     let start = Date().timeIntervalSince1970
@@ -39,14 +44,14 @@ public final class Searcher {
     let end = Date().timeIntervalSince1970
 
     // output the result of the search
-    print("Final Line: \(PVTable.shared)")
+    print("Final Line: \(pvTable)")
     print("\(nodeCount) nodes visited.")
     print("Needed \(end - start), \(Double(nodeCount) / (end - start)) nodes/s, \(cutoffs) cutoffs.")
     return foundMove
   }
 
   @discardableResult
-  private func alphaBeta(side: CTSide, depth: Int, alpha: Int, beta: Int) -> Int {
+  func alphaBeta(side: CTSide, depth: Int, alpha: Int, beta: Int) -> Int {
     // best move in this node
     var bestMove: CTMove?
     var followUp: UInt64 = 0
@@ -55,7 +60,7 @@ public final class Searcher {
     nodeCount += 1
 
     // generate all possible moves and then pre-sort them for faster alpha/beta search
-    let moves = position.moveGenerator.generateAllMovesForSide(side).sorted { move1, move2 in
+    let moves = generator.generateAllMovesForSide(side).sorted { move1, move2 in
       return move1.evaluate() >= move2.evaluate()
     }
     
@@ -89,14 +94,14 @@ public final class Searcher {
     // if alpha has changed, store PV move
     if alpha != maxValue {
       if let bestMove = bestMove {
-        PVTable.shared.store(key: position.hashKey, move: bestMove, score: maxValue, followUp: followUp)
+        pvTable.store(key: position.hashKey, move: bestMove, score: maxValue, followUp: followUp)
       }
     }
 
     return maxValue
   }
 
-  private func quiescence(side: CTSide, alpha: Int, beta: Int) -> Int {
+  func quiescence(side: CTSide, alpha: Int, beta: Int) -> Int {
     // increase node count
     nodeCount += 1
 
@@ -110,7 +115,7 @@ public final class Searcher {
       newAlpha = standPat
     }
 
-    let moves = position.moveGenerator.generateCapturingMovesForSide(side)
+    let moves = generator.generateCapturingMovesForSide(side)
     for move in moves {
       guard position.makeMove(from: move.from, to: move.to) else { continue }
       let value = -quiescence(side: side.opposite(), alpha: -beta, beta: -newAlpha)

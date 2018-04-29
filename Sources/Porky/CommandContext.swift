@@ -14,13 +14,15 @@ class CommandContext {
   
   let commandSet: CommandSet
   let evaluator: Evaluator
+  let pvTable: Hashtable
 
   var position = CTPosition()
   var isQuit = false
   
-  init(commandSet: CommandSet, evaluator: Evaluator) {
+  init(commandSet: CommandSet, evaluator: Evaluator, pvTable: Hashtable) {
     self.commandSet = commandSet
     self.evaluator = evaluator
+    self.pvTable = pvTable
   }
   
 }

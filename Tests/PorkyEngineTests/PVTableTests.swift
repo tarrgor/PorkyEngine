@@ -12,10 +12,10 @@ import ChessToolkit
 
 final class PVTableTests: XCTestCase {
   
-  var sut: PVTable!
+  var sut: Hashtable!
   
   override func setUp() {
-    sut = PVTable()
+    sut = DefaultPVTable()
   }
   
   func testStoreAMove_DescriptionIsCorrect() {
