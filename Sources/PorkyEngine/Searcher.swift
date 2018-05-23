@@ -17,17 +17,19 @@ public final class Searcher {
   let position: CTPosition
   let evaluator: Evaluator
   let generator: MoveGenerator
+  let config: SearchConfig
   
   var foundMove: CTMove?
   var cutoffs: Int = 0
 
   var pvTable: Hashtable
   
-  public init(position: CTPosition, evaluator: Evaluator, pvTable: Hashtable, generator: MoveGenerator) {
+  public init(position: CTPosition, evaluator: Evaluator, pvTable: Hashtable, generator: MoveGenerator, config: SearchConfig = SearchConfig()) {
     self.position = position
     self.evaluator = evaluator
     self.pvTable = pvTable
     self.generator = generator
+    self.config = config
   }
 
   @discardableResult
@@ -65,11 +67,15 @@ public final class Searcher {
     }
     
     // if end of search depth reached, return current evaluation
-    if (depth == 0 || moves.count == 0) {
-      // Quiescence search
-      return quiescence(side: side.opposite(), alpha: alpha, beta: beta)
+    if depth == 0 || moves.count == 0 {
+      if config.quiescenceEnabled {
+        // Quiescence search
+        return quiescence(side: side.opposite(), alpha: alpha, beta: beta)
+      } else {
+        return side == .white ? evaluator.evaluate(position: position) : -evaluator.evaluate(position: position)
+      }
     }
-  
+    
     // search best move
     var maxValue = alpha
     for move in moves {
